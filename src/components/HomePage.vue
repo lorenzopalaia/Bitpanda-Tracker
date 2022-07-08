@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <img src="../assets/image.svg" alt="" />
-    <div v-if="!connected" class="row mt-4">
+    <div class="text-center">
+      <img src="../assets/imgs/image.png" alt="" />
+    </div>
+    <div v-if="connectionStatus === 'disconnected'" class="row mt-4 text-center">
       <div class="col-3 mx-auto">
         <div v-if="wrongApi" class="card bg-danger mb-4">
           <div class="card-body">
@@ -16,7 +18,6 @@
         <div class="card">
           <div class="card-body">
             <p class="card-text">API Key</p>
-
             <input class="apiInput" v-model="apiKey" type="text" placeholder="Bitpanda API Key" />
             <div class="mt-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#27d17f" class="bi bi-square"
@@ -33,7 +34,7 @@
               </svg>
               <p class="d-inline m-2" style="color: #27d17f">Remember</p>
             </div>
-            <div class="btn mt-4">
+            <div class="btn mt-4 btn-connect">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                 class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
                 <path
@@ -45,16 +46,28 @@
         </div>
       </div>
     </div>
+    <div v-else-if="connectionStatus === 'connecting'">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="true" color="#27d17f"
+        background-color="#000" loader="dots" />
+    </div>
     <div v-else>
+      <!-- connected -->
+      <div class="text-end">
+        <div class="btn btn-outline-danger btn-disconnect" @click="disconnect">
+          Disconnect
+        </div>
+      </div>
       <div v-if="cryptoindexes.length > 0">
-        <p class="card-text fs-1">Cryptoindexes</p>
-        <div class="row mt-4">
+        <p class="card-text fs-1 m-0">Cryptoindexes</p>
+        <div class="row">
           <div v-for="crypto in cryptoindexes" :key="crypto.attributes.cryptocoin_id" class="col-2 mt-4">
             <div class="card">
               <div class="card-body">
-                <p class="avatar m-2">
-                  {{ crypto.attributes.cryptocoin_symbol }}
-                </p>
+                <img :src="
+                  'https://ui-avatars.com/api/?background=random&name=' +
+                  crypto.attributes.cryptocoin_symbol +
+                  '&rounded=true&length=10&font-size=0.25'
+                " alt="" class="avatar" />
                 <div class="d-inline m-2">
                   <p class="card-text d-table-row">
                     {{ crypto.attributes.cryptocoin_symbol }}
@@ -63,7 +76,7 @@
                     {{ tickers[crypto.attributes.cryptocoin_symbol]["USD"] }}$
                   </p>
                 </div>
-                <p class="card-text m-2 fs-4">
+                <p class="card-text semi-bold m-2 fs-4">
                   {{ parseFloat(crypto.attributes.balance).toFixed(2) }}$
                 </p>
               </div>
@@ -72,25 +85,22 @@
         </div>
       </div>
       <div v-if="etfs.length > 0">
-        <p class="card-text fs-1">ETF</p>
-        <div class="row mt-4">
+        <p class="card-text fs-1 m-0 mt-4">ETF</p>
+        <div class="row">
           <div v-for="etf in etfs" :key="etf.attributes.cryptocoin_id" class="col-2 mt-4">
             <div class="card">
               <div class="card-body">
-                <p class="avatar m-2">
-                  {{ etf.attributes.cryptocoin_symbol }}
-                </p>
+                <img :src="
+                  'https://ui-avatars.com/api/?background=random&name=' +
+                  etf.attributes.cryptocoin_symbol +
+                  '&rounded=true&length=10&font-size=0.25'
+                " alt="" class="avatar" />
                 <div class="d-inline m-2">
                   <p class="card-text d-table-row">
                     {{ etf.attributes.cryptocoin_symbol }}
                   </p>
-                  <!--
-              <p class="card-text d-table-row">
-                {{ tickers[crypto.attributes.cryptocoin_symbol]["USD"] }}$
-              </p>
-              -->
                 </div>
-                <p class="card-text m-2 fs-4">
+                <p class="card-text semi-bold m-2 fs-4">
                   {{ parseFloat(etf.attributes.balance).toFixed(2) }}$
                 </p>
               </div>
@@ -99,20 +109,22 @@
         </div>
       </div>
       <div v-if="stocks.length > 0">
-        <p class="card-text fs-1">Stocks</p>
-        <div class="row mt-4">
+        <p class="card-text fs-1 m-0 mt-4">Stocks</p>
+        <div class="row">
           <div v-for="stock in stocks" :key="stock.attributes.cryptocoin_id" class="col-2 mt-4">
             <div class="card">
               <div class="card-body">
-                <p class="avatar m-2">
-                  {{ stock.attributes.cryptocoin_symbol }}
-                </p>
+                <img :src="
+                  'https://ui-avatars.com/api/?background=random&name=' +
+                  stock.attributes.cryptocoin_symbol +
+                  '&rounded=true&length=10&font-size=0.25'
+                " alt="" class="avatar" />
                 <div class="d-inline m-2">
                   <p class="card-text d-table-row">
                     {{ stock.attributes.cryptocoin_symbol }}
                   </p>
                 </div>
-                <p class="card-text m-2 fs-4">
+                <p class="card-text semi-bold m-2 fs-4">
                   {{ parseFloat(stock.attributes.balance).toFixed(2) }}$
                 </p>
               </div>
@@ -121,23 +133,27 @@
         </div>
       </div>
       <div v-if="commodities.length > 0">
-        <p class="card-text fs-1">Commodity</p>
-        <div class="row mt-4">
+        <p class="card-text fs-1 m-0 mt-4">Commodity</p>
+        <div class="row">
           <div v-for="commodity in commodities" :key="commodity.attributes.cryptocoin_id" class="col-2 mt-4">
             <div class="card">
               <div class="card-body">
-                <p class="avatar m-2">
-                  {{ commodity.attributes.cryptocoin_symbol }}
-                </p>
+                <img :src="
+                  'https://ui-avatars.com/api/?background=random&name=' +
+                  commodity.attributes.cryptocoin_symbol +
+                  '&rounded=true&length=10&font-size=0.25'
+                " alt="" class="avatar" />
                 <div class="d-inline m-2">
                   <p class="card-text d-table-row">
                     {{ commodity.attributes.cryptocoin_symbol }}
                   </p>
                   <p class="card-text d-table-row">
-                    {{ tickers[commodity.attributes.cryptocoin_symbol]["USD"] }}$
+                    {{
+                    tickers[commodity.attributes.cryptocoin_symbol]["USD"]
+                    }}$
                   </p>
                 </div>
-                <p class="card-text m-2 fs-4">
+                <p class="card-text semi-bold m-2 fs-4">
                   {{ parseFloat(commodity.attributes.balance).toFixed(2) }}$
                 </p>
               </div>
@@ -146,23 +162,26 @@
         </div>
       </div>
       <div v-if="cryptocoins.length > 0">
-        <p class="card-text fs-1">Cryptocoins</p>
-        <div class="row mt-4">
+        <p class="card-text fs-1 m-0 mt-4">Cryptocoins</p>
+        <div class="row">
           <div v-for="cryptocoin in cryptocoins" :key="cryptocoin.attributes.cryptocoin_id" class="col-2 mt-4">
             <div class="card">
               <div class="card-body">
-                <p class="avatar m-2">
-                  {{ cryptocoin.attributes.cryptocoin_symbol }}
-                </p>
+                <img
+                  :src="'https://raw.githubusercontent.com/rainner/crypto-icons/main/icons/' + cryptocoin.attributes.cryptocoin_symbol.toLowerCase() + '.png'"
+                  alt="" class="avatar"
+                  @error="$event.target.src = 'https://ui-avatars.com/api/?background=random&name=' + cryptocoin.attributes.cryptocoin_symbol + '&rounded=true&length=10&font-size=0.25'" />
                 <div class="d-inline m-2">
                   <p class="card-text d-table-row">
                     {{ cryptocoin.attributes.cryptocoin_symbol }}
                   </p>
                   <p class="card-text d-table-row">
-                    {{ tickers[cryptocoin.attributes.cryptocoin_symbol]["USD"] }}$
+                    {{
+                    tickers[cryptocoin.attributes.cryptocoin_symbol]["USD"]
+                    }}$
                   </p>
                 </div>
-                <p class="card-text m-2 fs-4">
+                <p class="card-text semi-bold m-2 fs-4">
                   {{ parseFloat(cryptocoin.attributes.balance).toFixed(2) }}$
                 </p>
               </div>
@@ -176,16 +195,22 @@
 
 <script>
 import axios from "axios";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 
 export default {
   name: "HomePage",
+  components: {
+    Loading,
+  },
   data() {
     return {
-      connected: false,
+      connectionStatus: "disconnected",
+      isLoading: false,
       remember: false,
       wrongApi: false,
       internalError: false,
-      apiKey: null, //a921da3c24ba854a4d92874079268d975cebe2108a6625ebaaea8c072ff04e93ca877863973a289419444d8be81fc45175fbe8b8f708e78b55c80dfc9911b9ba
+      apiKey: null,
       cryptoindexes: null,
       etfs: null,
       stocks: null,
@@ -196,6 +221,8 @@ export default {
   },
   methods: {
     async connect() {
+      this.connectionStatus = "connecting";
+      this.isLoading = true;
       this.wrongApi = false;
       this.internalError = false;
       let uri =
@@ -207,12 +234,16 @@ export default {
         },
       };
       let res = await axios.get(uri, config).catch((error) => {
-        if (error.response.status == 401) this.wrongApi = true;
-        else if (error.response.status == 500) this.internalError = true;
+        this.isLoading = false;
+        this.connectionStatus = "disconnected";
+
+        if (error.response.status === 401) this.wrongApi = true;
+        else if (error.response.status === 500) this.internalError = true;
+        return;
       });
-      //let cryptocoin = res.data.data.attributes.cryptocoin;
       if (res.status == 200) {
-        this.connected = true;
+        this.isLoading = false;
+        this.connectionStatus = "connected";
         if (this.remember) localStorage.setItem("apiKey", this.apiKey);
         this.etfs = res.data.data.attributes.security.etf.attributes.wallets;
         this.cryptoindexes =
@@ -225,10 +256,21 @@ export default {
           res.data.data.attributes.cryptocoin.attributes.wallets;
       }
       uri = "https://api.bitpanda.com/v1/ticker";
-      res = await axios.get(uri);
+      res = await axios.get(uri).catch((error) => {
+        this.isLoading = false;
+        this.connectionStatus = "disconnected";
+        if (error.response.status === 401) this.internalError = true;
+        return;
+      });
       if (res.status == 200) {
         this.tickers = res.data;
       }
+    },
+    disconnect() {
+      this.isLoading = true;
+      localStorage.removeItem("apiKey");
+      this.connectionStatus = "disconnected";
+      this.isLoading = false;
     },
   },
   mounted() {
@@ -257,7 +299,7 @@ export default {
 .card-text {
   color: white;
 }
-.btn {
+.btn-connect {
   background-color: #27d17f;
 }
 .btn-text {
@@ -266,12 +308,9 @@ export default {
 .avatar {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  color: #fff;
-  line-height: 48px;
-  font-size: 12px;
-  text-align: center;
-  background-color: #27d17f;
   display: inline-block;
+}
+.semi-bold {
+  font-family: BR-Candor-SemiBold;
 }
 </style>

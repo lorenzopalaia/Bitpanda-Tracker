@@ -18,8 +18,16 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
+  font-family: BR-Candor-Regular;
+}
+@font-face {
+  font-family: "BR-Candor-Regular";
+  src: local("BR-Candor-Regular"), url(./assets/fonts/BR-Candor-Regular.otf) format("opentype");
+}
+@font-face {
+  font-family: "BR-Candor-SemiBold";
+  src: local("BR-Candor-SemiBold"), url(./assets/fonts/BR-Candor-SemiBold.otf) format("opentype");
 }
 </style>
