@@ -57,11 +57,11 @@
           Disconnect
         </div>
       </div>
-      <div v-if="cryptoindexes.length > 0">
+      <div v-if="cryptoindexes !== null && cryptoindexes.length > 0">
         <p class="card-text fs-1 m-0">Cryptoindexes</p>
         <div class="row">
           <div v-for="crypto in cryptoindexes" :key="crypto.attributes.cryptocoin_id"
-            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
+            class="col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <img :src="
@@ -85,11 +85,10 @@
           </div>
         </div>
       </div>
-      <div v-if="etfs.length > 0">
+      <div v-if="etfs !== null && etfs.length > 0">
         <p class="card-text fs-1 m-0 mt-4">ETF</p>
         <div class="row">
-          <div v-for="etf in etfs" :key="etf.attributes.cryptocoin_id"
-            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
+          <div v-for="etf in etfs" :key="etf.attributes.cryptocoin_id" class="col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <img :src="
@@ -110,11 +109,11 @@
           </div>
         </div>
       </div>
-      <div v-if="stocks.length > 0">
+      <div v-if="stocks !== null && stocks.length > 0">
         <p class="card-text fs-1 m-0 mt-4">Stocks</p>
         <div class="row">
           <div v-for="stock in stocks" :key="stock.attributes.cryptocoin_id"
-            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
+            class="col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <!-- & encoding not working-->
@@ -136,11 +135,11 @@
           </div>
         </div>
       </div>
-      <div v-if="commodities.length > 0">
+      <div v-if="commodites !== null && commodities.length > 0">
         <p class="card-text fs-1 m-0 mt-4">Commodity</p>
         <div class="row">
           <div v-for="commodity in commodities" :key="commodity.attributes.cryptocoin_id"
-            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
+            class="col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <img :src="
@@ -166,17 +165,23 @@
           </div>
         </div>
       </div>
-      <div v-if="cryptocoins.length > 0">
+      <div v-if="cryptocoins !== null && cryptocoins.length > 0">
         <p class="card-text fs-1 m-0 mt-4">Cryptocoins</p>
         <div class="row">
           <div v-for="cryptocoin in cryptocoins" :key="cryptocoin.attributes.cryptocoin_id"
-            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
+            class="col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
-                <img
-                  :src="'https://raw.githubusercontent.com/rainner/crypto-icons/main/icons/' + cryptocoin.attributes.cryptocoin_symbol.toLowerCase() + '.png'"
-                  alt="" class="avatar"
-                  @error="$event.target.src = 'https://ui-avatars.com/api/?background=random&name=' + cryptocoin.attributes.cryptocoin_symbol + '&rounded=true&length=10&font-size=0.25'" />
+                <img :src="
+                  'https://raw.githubusercontent.com/rainner/crypto-icons/main/icons/' +
+                  cryptocoin.attributes.cryptocoin_symbol.toLowerCase() +
+                  '.png'
+                " alt="" class="avatar" @error="
+                  $event.target.src =
+                    'https://ui-avatars.com/api/?background=random&name=' +
+                    cryptocoin.attributes.cryptocoin_symbol +
+                    '&rounded=true&length=10&font-size=0.25'
+                " />
                 <div class="d-inline m-2">
                   <p class="card-text d-table-row">
                     {{ cryptocoin.attributes.cryptocoin_symbol }}
@@ -194,6 +199,85 @@
             </div>
           </div>
         </div>
+      </div>
+      <div v-if="transactions !== null && transactions.length > 0">
+        <p class="card-text fs-1 m-0 mt-4">Trades</p>
+        <table class="table card-text">
+          <thead class="semi-bold">
+            <tr>
+              <th scope="col">Trade</th>
+              <th scope="col">Amount</th>
+              <th class="d-none d-sm-table-cell" scope="col">USD Amount</th>
+              <th class="d-none d-sm-table-cell" scope="col">Swap Price</th>
+              <th class="d-none d-lg-table-cell" scope="col">Fee</th>
+              <th class="d-none d-md-table-cell" scope="col">Time</th>
+              <th scope="col">Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr scope="row" v-for="transaction in transactions" :key="transaction.attributes.trade_id">
+              <td>
+                <span>
+                  <img :src="
+                    'https://raw.githubusercontent.com/rainner/crypto-icons/main/icons/' +
+                    transaction.attributes.cryptocoin_symbol.toLowerCase() +
+                    '.png'
+                  " alt="" class="avatar-mini d-none d-md-inline" @error="
+                    $event.target.src =
+                      'https://ui-avatars.com/api/?background=random&name=' +
+                      transaction.attributes.cryptocoin_symbol +
+                      '&rounded=true&length=10&font-size=0.25'
+                  " />
+                  <img v-if="transaction.attributes.trade" :src="
+                    'https://raw.githubusercontent.com/rainner/crypto-icons/main/icons/' +
+                    getTickerFromId(transaction.attributes.trade.attributes.related_swap_trade.attributes.cryptocoin_id).toLowerCase() +
+                    '.png'
+                  " alt="" class="avatar-mini d-none d-md-inline" @error="
+                    $event.target.src =
+                      'https://ui-avatars.com/api/?background=random&name=' +
+                      getTickerFromId(transaction.attributes.trade.attributes.related_swap_trade.attributes.cryptocoin_id) +
+                      '&rounded=true&length=10&font-size=0.25'
+                  " />
+                  {{ transaction.attributes.cryptocoin_symbol }}
+                </span>
+                <span class="pl-0" v-if="transaction.attributes.trade">
+                  / {{
+                  getTickerFromId(transaction.attributes.trade.attributes.related_swap_trade.attributes.cryptocoin_id)
+                  }}
+                </span>
+              </td>
+              <td>{{ parseFloat(transaction.attributes.amount).toFixed(2) }}</td>
+              <td class="d-none d-sm-table-cell">
+                <div v-if="transaction.attributes.trade">
+                  {{
+                  (
+                  parseFloat(transaction.attributes.amount) *
+                  parseFloat(
+                  transaction.attributes.trade.attributes.price
+                  )
+                  ).toFixed(2)
+                  }}$
+                </div>
+              </td>
+              <td class="d-none d-sm-table-cell">
+                <div v-if="transaction.attributes.trade">
+                  {{parseFloat(transaction.attributes.trade.attributes.price).toFixed(2) }}$
+                </div>
+              </td>
+              <td class="d-none d-lg-table-cell">{{ parseFloat(transaction.attributes.fee).toFixed(2) }}$</td>
+              <td class="d-none d-md-table-cell">
+                {{
+                new Date(
+                transaction.attributes.time.unix * 1000
+                ).toLocaleTimeString("en-US")
+                }}
+              </td>
+              <td>
+                {{ transaction.attributes.type.toUpperCase() }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -223,15 +307,27 @@ export default {
       commodities: null,
       cryptocoins: null,
       tickers: null,
+      transactions: null,
     };
   },
   methods: {
     async connect() {
+      let uri = "https://api.bitpanda.com/v1/ticker";
+      let res = await axios.get(uri).catch((error) => {
+        this.isLoading = false;
+        this.connectionStatus = "disconnected";
+        if (error.response.status === 500) this.internalError = true;
+        return;
+      });
+      if (res.status == 200) {
+        this.tickers = res.data;
+      }
+
       this.connectionStatus = "connecting";
       this.isLoading = true;
       this.wrongApi = false;
       this.internalError = false;
-      let uri =
+      uri =
         "https://dashboard-cors.herokuapp.com/https://api.bitpanda.com/v1/asset-wallets";
       let config = {
         headers: {
@@ -239,7 +335,7 @@ export default {
           "X-Api-Key": this.apiKey,
         },
       };
-      let res = await axios.get(uri, config).catch((error) => {
+      res = await axios.get(uri, config).catch((error) => {
         this.isLoading = false;
         this.connectionStatus = "disconnected";
 
@@ -261,23 +357,31 @@ export default {
         this.cryptocoins =
           res.data.data.attributes.cryptocoin.attributes.wallets;
       }
-      uri = "https://api.bitpanda.com/v1/ticker";
-      res = await axios.get(uri).catch((error) => {
-        this.isLoading = false;
-        this.connectionStatus = "disconnected";
-        if (error.response.status === 401) this.internalError = true;
+
+      uri =
+        "https://dashboard-cors.herokuapp.com/https://api.bitpanda.com/v1/wallets/transactions?page_size=100";
+      res = await axios.get(uri, config).catch((error) => {
+        if (error.response.status === 500) this.internalError = true;
         return;
       });
       if (res.status == 200) {
-        this.tickers = res.data;
+        this.transactions = res.data.data;
       }
     },
     disconnect() {
       this.isLoading = true;
       localStorage.removeItem("apiKey");
+      //this.apiKey = null;
       this.connectionStatus = "disconnected";
       this.isLoading = false;
     },
+    getTickerFromId(id) {
+      for (const item of [this.cryptoindexes, this.etfs, this.stocks, this.commodities, this.cryptocoins]) {
+        let found = item.find((elem) => elem.attributes.cryptocoin_id === id);
+        if (found !== undefined) return (found.attributes.cryptocoin_symbol);
+      }
+      return "NF";
+    }
   },
   mounted() {
     this.apiKey = localStorage.getItem("apiKey");
@@ -316,7 +420,18 @@ export default {
   height: 48px;
   display: inline-block;
 }
+.avatar-mini {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+}
 .semi-bold {
   font-family: BR-Candor-SemiBold;
+}
+thead {
+  color: #27d17f;
+}
+tr:hover {
+  color: #27d17f;
 }
 </style>
