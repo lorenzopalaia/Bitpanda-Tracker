@@ -4,7 +4,7 @@
       <img src="../assets/imgs/image.png" alt="" />
     </div>
     <div v-if="connectionStatus === 'disconnected'" class="row mt-4 text-center">
-      <div class="col-3 mx-auto">
+      <div class="col-10 col-sm-8 col-md-6 col-lg-4 col-xl-3 mx-auto">
         <div v-if="wrongApi" class="card bg-danger mb-4">
           <div class="card-body">
             <p class="card-text">Wrong API Key</p>
@@ -60,7 +60,8 @@
       <div v-if="cryptoindexes.length > 0">
         <p class="card-text fs-1 m-0">Cryptoindexes</p>
         <div class="row">
-          <div v-for="crypto in cryptoindexes" :key="crypto.attributes.cryptocoin_id" class="col-2 mt-4">
+          <div v-for="crypto in cryptoindexes" :key="crypto.attributes.cryptocoin_id"
+            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <img :src="
@@ -87,7 +88,8 @@
       <div v-if="etfs.length > 0">
         <p class="card-text fs-1 m-0 mt-4">ETF</p>
         <div class="row">
-          <div v-for="etf in etfs" :key="etf.attributes.cryptocoin_id" class="col-2 mt-4">
+          <div v-for="etf in etfs" :key="etf.attributes.cryptocoin_id"
+            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <img :src="
@@ -111,12 +113,14 @@
       <div v-if="stocks.length > 0">
         <p class="card-text fs-1 m-0 mt-4">Stocks</p>
         <div class="row">
-          <div v-for="stock in stocks" :key="stock.attributes.cryptocoin_id" class="col-2 mt-4">
+          <div v-for="stock in stocks" :key="stock.attributes.cryptocoin_id"
+            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
+                <!-- & encoding not working-->
                 <img :src="
                   'https://ui-avatars.com/api/?background=random&name=' +
-                  stock.attributes.cryptocoin_symbol +
+                  stock.attributes.cryptocoin_symbol.replaceAll('&', '%26') +
                   '&rounded=true&length=10&font-size=0.25'
                 " alt="" class="avatar" />
                 <div class="d-inline m-2">
@@ -135,7 +139,8 @@
       <div v-if="commodities.length > 0">
         <p class="card-text fs-1 m-0 mt-4">Commodity</p>
         <div class="row">
-          <div v-for="commodity in commodities" :key="commodity.attributes.cryptocoin_id" class="col-2 mt-4">
+          <div v-for="commodity in commodities" :key="commodity.attributes.cryptocoin_id"
+            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <img :src="
@@ -164,7 +169,8 @@
       <div v-if="cryptocoins.length > 0">
         <p class="card-text fs-1 m-0 mt-4">Cryptocoins</p>
         <div class="row">
-          <div v-for="cryptocoin in cryptocoins" :key="cryptocoin.attributes.cryptocoin_id" class="col-2 mt-4">
+          <div v-for="cryptocoin in cryptocoins" :key="cryptocoin.attributes.cryptocoin_id"
+            class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
             <div class="card">
               <div class="card-body">
                 <img
