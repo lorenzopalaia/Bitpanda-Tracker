@@ -118,6 +118,8 @@ To get a local copy up and running follow these simple example steps.
 
 ## Usage
 
+![Screenshot](repo_assets/screenshot.png)
+
 1. Run
    ```sh
    npm run serve
