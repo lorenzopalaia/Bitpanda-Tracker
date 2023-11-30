@@ -327,8 +327,7 @@ export default {
       this.isLoading = true;
       this.wrongApi = false;
       this.internalError = false;
-      uri =
-        "https://dashboard-cors.herokuapp.com/https://api.bitpanda.com/v1/asset-wallets";
+      uri = 'https://corsproxy.io/?' + encodeURIComponent('https://api.bitpanda.com/v1/asset-wallets');
       let config = {
         headers: {
           "Content-Type": "application/json",
@@ -358,14 +357,14 @@ export default {
           res.data.data.attributes.cryptocoin.attributes.wallets;
       }
 
-      uri =
-        "https://dashboard-cors.herokuapp.com/https://api.bitpanda.com/v1/wallets/transactions?page_size=100";
+      uri = 'https://corsproxy.io/?' + encodeURIComponent('https://api.bitpanda.com/v1/wallets/transactions?page_size=100');
       res = await axios.get(uri, config).catch((error) => {
         if (error.response.status === 500) this.internalError = true;
         return;
       });
       if (res.status == 200) {
         this.transactions = res.data.data;
+        //console.log(this.transactions);
       }
     },
     disconnect() {
